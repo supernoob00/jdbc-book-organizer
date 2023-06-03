@@ -2,6 +2,8 @@ import java.util.List;
 
 public interface LibraryDAO {
 
+    public boolean tableExists(String tableName);
+
     public void createTable();
 
     public void deleteTable();

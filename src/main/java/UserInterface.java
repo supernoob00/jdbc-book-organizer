@@ -16,19 +16,22 @@ public class UserInterface {
 
         public static Command getCommand(String key) {
             for (Command c : Command.values()) {
-                if (c.key.equals(key)) {
+                if (c.getKey().equals(key)) {
                     return c;
                 }
             }
             return null;
         }
 
-        public final String key;
+        private final String key;
 
         private Command(String key) {
             this.key = key;
         }
 
+        public String getKey() {
+            return key;
+        }
     }
 
     public void showCommands() {
@@ -38,20 +41,36 @@ public class UserInterface {
         }
     }
 
+    public Book getNewBook() {
+        System.out.print("Enter book title: ");
+        String title = this.scanner.nextLine();
+        System.out.print("Enter book author: ");
+        String author = this.scanner.nextLine();
+        System.out.print("Enter book publication year: ");
+        int year = this.scanner.nextInt();
+        scanner.nextLine();
+        return new Book(title, author, year);
+    }
+
     public void run() {
         showCommands();
-        boolean cont = true;
-        while (cont) {
-            System.out.println("Enter a command: ");
+        boolean running = true;
+        while (running) {
+            System.out.print("Enter a command: ");
             String userString = this.scanner.nextLine();
-            Command userCommand = Command.valueOf("userString");
+            Command userCommand = Command.getCommand(userString);
             switch (userCommand) {
                 case CREATE:
+                    getNewBook();
+                    break;
                 case READ:
+                    break;
                 case DELETE:
+                    break;
                 case UPDATE:
+                    break;
                 case QUIT:
-                    cont = false;
+                    running = false;
                     break;
                 default:
                     System.out.println("Invalid command.");
@@ -64,13 +83,11 @@ public class UserInterface {
     }
 
     public static void main(String[] args) {
-        Book myBook = new Book("The Lord of the Rings", "J.R.R Tolkien", 1950);
-        LibraryManager libDao = new LibraryManager();
-        libDao.createTable();
-        libDao.addBook(myBook);
+        LibraryManager lib = new LibraryManager();
+        lib.deleteTable();
+        lib.createTable();
 
-        Scanner scanner = new Scanner(System.in);
-        String command = scanner.nextLine();
-        System.out.println();
+        UserInterface ui = new UserInterface();
+        ui.run();
     }
 }

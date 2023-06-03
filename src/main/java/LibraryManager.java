@@ -7,8 +7,10 @@ public class LibraryManager implements LibraryDAO {
         try {
             ResultSetMetaData rsmd = rs.getMetaData();
             while (rs.next()) {
-
-
+                for (int i = 1; i <= rsmd.getColumnCount(); i++) {
+                    String line = rsmd.getColumnName(i) + ": " + rs.getString(i) + " ";
+                    System.out.println(line);
+                }
             }
         }
         catch (SQLException e) {
@@ -16,25 +18,31 @@ public class LibraryManager implements LibraryDAO {
         }
      }
 
+    @Override
+    public boolean tableExists(String tableName) {
+        return false;
+    }
+
     // creates a new library table
     public void createTable() {
         String createString = "CREATE table library (" +
                 "id INT NOT NULL AUTO_INCREMENT, " +
                 "title VARCHAR(50), " +
                 "author VARCHAR(50), " +
-                "year YEAR);";
+                "year INT, " +
+                "PRIMARY KEY(id));";
         try (Connection connection = ConnectionUtil.makeConnection()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(createString);
         }
         catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
     @Override
     public void deleteTable() {
-        String deleteString = "DELETE table library;";
+        String deleteString = "DROP table library;";
         try (Connection connection = ConnectionUtil.makeConnection()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(deleteString);
@@ -69,20 +77,20 @@ public class LibraryManager implements LibraryDAO {
     @Override
     public List<Book> getAllBooks() {
         List<Book> books = new ArrayList<Book>();
-        String query = "SELECT * FROM LIBRARY;";
+        String query = "SELECT * FROM library;";
         try (Connection connection = ConnectionUtil.makeConnection();) {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
             while (result.next()) {
-                String name = result.getString("name");
+                String title = result.getString("title");
                 String author = result.getString("author");
                 int year = result.getInt("year");
-                Book book = new Book(name, author, year);
+                Book book = new Book(title, author, year);
                 books.add(book);
             }
         }
         catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return books;
     }
@@ -128,13 +136,13 @@ public class LibraryManager implements LibraryDAO {
             ps.setString(1, book.getTitle());
             ps.setString(2, book.getAuthor());
             ps.setInt(3, book.getYear());
+            ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             bookId = rs.getInt(1);
             book.setId(bookId);
         }
         catch (SQLException e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
         return bookId;

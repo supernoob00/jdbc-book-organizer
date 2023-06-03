@@ -1,6 +1,19 @@
 import java.util.Objects;
+import java.util.List;
 
 public class Book {
+    public static List<Book> sampleBooks = List.of(
+        new Book("The Lord of the Rings", "J.R.R Tolkien", 1950),
+        new Book("Pride and Prejudice", "Jane Austen", 1878),
+        new Book("The Cat in the Hat", "Dr. Seuss", 1950)
+    );
+
+    static {
+        for (int i = 0; i < sampleBooks.size(); i++) {
+            sampleBooks.get(i).setId(i+1);
+        }
+    }
+
     private int id = -1;
     private String title;
     private String author;
