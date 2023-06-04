@@ -6,7 +6,7 @@ import java.sql.SQLException;
 public class ConnectionUtil {
     private static String defaultUrl = "jdbc:mysql://localhost:3306/library";
     private static String defaultUsername = "root";
-    private static String defaultPassword = "egg7roll";
+    private static String defaultPassword = "password";
 
     public static Connection makeConnection() throws SQLException {
         Connection connection = DriverManager.getConnection(
