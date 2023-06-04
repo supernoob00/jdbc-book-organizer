@@ -1,10 +1,13 @@
+import java.util.List;
 import java.util.Scanner;
 
 public class UserInterface {
     Scanner scanner;
+    LibraryManager lib;
 
     public UserInterface() {
         this.scanner = new Scanner(System.in);
+        this.lib = new LibraryManager();
     }
 
     private enum Command {
@@ -14,13 +17,13 @@ public class UserInterface {
         DELETE("d"),
         QUIT("q");
 
-        public static Command getCommand(String key) {
+        public static Command getCommand(String key) throws Exception {
             for (Command c : Command.values()) {
                 if (c.getKey().equals(key)) {
                     return c;
                 }
             }
-            return null;
+            throw new Exception("Not a valid command.");
         }
 
         private final String key;
@@ -58,28 +61,60 @@ public class UserInterface {
         while (running) {
             System.out.print("Enter a command: ");
             String userString = this.scanner.nextLine();
-            Command userCommand = Command.getCommand(userString);
-            switch (userCommand) {
-                case CREATE:
-                    getNewBook();
-                    break;
-                case READ:
-                    break;
-                case DELETE:
-                    break;
-                case UPDATE:
-                    break;
-                case QUIT:
-                    running = false;
-                    break;
-                default:
-                    System.out.println("Invalid command.");
+            try {
+                Command userCommand = Command.getCommand(userString);
+                switch (userCommand) {
+                    case CREATE: {
+                        Book userBook = getNewBook();
+                        lib.addBook(userBook);
+                        break;
+                    }
+                    case READ: {
+                        List<Book> books = lib.getAllBooks();
+                        String bookListString = Book.bookListString(books);
+                        System.out.println(bookListString);
+                        break;
+                    }
+                    case UPDATE: {
+                        System.out.println("Enter a book id to update: ");
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        Book current = lib.getBookById(id);
+                        if (current == null) {
+                            System.out.println("Book with given id does not exist.");
+                        }
+                        else {
+                            Book updated = getNewBook();
+                            updated.setId(id);
+                            lib.updateBook(updated);
+                        }
+                        break;
+                    }
+                    case DELETE: {
+                        System.out.println("Enter a book id to delete: ");
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        Book book = lib.getBookById(id);
+                        if (book == null) {
+                            System.out.println("Book with given id does not exist.");
+                        } else {
+                            lib.deleteBookById(id);
+                        }
+                        break;
+                    }
+                    case QUIT: {
+                        running = false;
+                        break;
+                    }
+                }
+            }
+            catch (Exception e) {
+                String errorMessage = e.getMessage();
+                System.out.println(errorMessage);
             }
         }
-    }
-
-    public void close() {
         this.scanner.close();
+        System.exit(0);
     }
 
     public static void main(String[] args) {

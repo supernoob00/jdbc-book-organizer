@@ -82,10 +82,11 @@ public class LibraryManager implements LibraryDAO {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
             while (result.next()) {
+                int id = result.getInt("id");
                 String title = result.getString("title");
                 String author = result.getString("author");
                 int year = result.getInt("year");
-                Book book = new Book(title, author, year);
+                Book book = new Book(id, title, author, year);
                 books.add(book);
             }
         }
@@ -95,11 +96,13 @@ public class LibraryManager implements LibraryDAO {
         return books;
     }
 
+    // Not yet implemented
     @Override
     public List<Book> getBooksByTitle(String title) {
         return null;
     }
 
+    // Not yet implemented
     @Override
     public List<Book> getBooksByAuthor(String author) {
         return null;
@@ -140,6 +143,7 @@ public class LibraryManager implements LibraryDAO {
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             bookId = rs.getInt(1);
+            System.out.println("BOOK ID: " + bookId);
             book.setId(bookId);
         }
         catch (SQLException e) {

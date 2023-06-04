@@ -8,10 +8,24 @@ public class Book {
         new Book("The Cat in the Hat", "Dr. Seuss", 1950)
     );
 
+    // set id of sample books
     static {
         for (int i = 0; i < sampleBooks.size(); i++) {
             sampleBooks.get(i).setId(i+1);
         }
+    }
+
+    public static String bookListString(List<Book> books) {
+
+        if (books.size() == 0) {
+            return "No books in this library.";
+        }
+
+        String bookList = "";
+        for (Book book : books) {
+            bookList = bookList + book.toString() + System.lineSeparator();
+        }
+        return bookList;
     }
 
     private int id = -1;
@@ -24,6 +38,13 @@ public class Book {
     }
 
     public Book(String title, String author, int year) {
+        this.title = title;
+        this.author = author;
+        this.year = year;
+    }
+
+    public Book(int id, String title, String author, int year) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.year = year;
@@ -72,5 +93,13 @@ public class Book {
     @Override
     public int hashCode() {
         return Objects.hash(id, title, author, year);
+    }
+
+    @Override
+    public String toString() {
+        return "ID: " + this.id
+                + " TITLE: " + this.title
+                + " AUTHOR: " + this.author
+                + " YEAR: " + this.year;
     }
 }
